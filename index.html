@@ -3,85 +3,202 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Finans Dashboard | Markedsanalyse</title>
+    <title>BI Future Finance | Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
+        :root {
+            --bi-blue: #00244E;
+            --bi-light: #4C76BA;
+            --accent: #00ADBA;
+            --danger: #FF4B4B;
+            --success: #00E676;
+        }
+
         body {
-            background-color: #00244E; /* BI Mørkeblå */
+            background-color: var(--bi-blue);
             color: white;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            margin: 0;
+            padding: 20px;
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
-            height: 100vh;
-            margin: 0;
-            text-align: center;
         }
 
-        .container {
-            padding: 2rem;
-            border-radius: 15px;
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
-        }
-
-        .logo {
-            width: 180px;
-            margin-bottom: 20px;
-        }
-
-        h1 {
-            font-size: 2.5rem;
-            margin-bottom: 10px;
-            letter-spacing: 1px;
-        }
-
-        p {
-            color: #4C76BA;
-            font-size: 1.1rem;
+        /* Logo-plassering øverst i hjørnet */
+        .header {
+            width: 100%;
+            max-width: 1200px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             margin-bottom: 30px;
         }
 
-        .btn {
-            background-color: #00ADBA; /* Turkis kontrast */
-            color: white;
-            padding: 15px 30px;
-            text-decoration: none;
-            border-radius: 50px;
+        .logo {
+            width: 120px;
+            filter: drop-shadow(0 0 5px rgba(255,255,255,0.2));
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            width: 100%;
+            max-width: 1200px;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            border-color: var(--accent);
+        }
+
+        .ticker-name {
+            font-size: 0.9rem;
+            color: var(--bi-light);
+            text-transform: uppercase;
             font-weight: bold;
-            transition: transform 0.3s, background-color 0.3s;
-            display: inline-block;
         }
 
-        .btn:hover {
-            background-color: #008c96;
-            transform: scale(1.05);
+        .price {
+            font-size: 1.8rem;
+            font-weight: bold;
+            margin: 10px 0;
         }
 
-        .footer {
-            position: absolute;
-            bottom: 20px;
-            font-size: 0.8rem;
-            opacity: 0.6;
+        .delta {
+            font-size: 0.9rem;
+            font-weight: bold;
+        }
+
+        .up { color: var(--success); }
+        .down { color: var(--danger); }
+
+        canvas {
+            margin-top: 15px;
+            max-height: 150px;
+        }
+
+        h1 {
+            font-weight: 300;
+            letter-spacing: 2px;
         }
     </style>
 </head>
 <body>
 
-    <div class="container">
-        <img src="https://www.bi.no/globalassets/images/logo/bi_logo_white.png" alt="Logo" class="logo">
-        
-        <h1>Market Intelligence</h1>
-        <p>Sanntidsoversikt over OSEBX og Kryptovaluta</p>
-        
-        <a href="DIN_STREAMLIT_URL_HER" class="btn">ÅPNE DASHBOARD</a>
+    <div class="header">
+        <h1>FUTURE FINANCE <span style="color: var(--accent);">•</span></h1>
+        <img src="https://www.bi.no/globalassets/images/logo/bi_logo_white.png" alt="Bedriftslogo" class="logo">
     </div>
 
-    <div class="footer">
-        © 2026 Markedsanalyse | Utviklet med Python & Streamlit
+    <div class="dashboard-grid">
+        <div class="card">
+            <div class="ticker-name">Oslo Børs (OSEBX)</div>
+            <div class="price" id="osebx-price">1,245.50</div>
+            <div class="delta up" id="osebx-delta">+0.45%</div>
+            <canvas id="chart-osebx"></canvas>
+        </div>
+
+        <div class="card">
+            <div class="ticker-name">Bitcoin (BTC)</div>
+            <div class="price" id="btc-price">$64,230</div>
+            <div class="delta up" id="btc-delta">+1.20%</div>
+            <canvas id="chart-btc"></canvas>
+        </div>
+
+        <div class="card">
+            <div class="ticker-name">CyberCoin (CYBER)</div>
+            <div class="price" id="cyber-price">$12.40</div>
+            <div class="delta down" id="cyber-delta">-2.15%</div>
+            <canvas id="chart-cyber"></canvas>
+        </div>
+
+        <div class="card">
+            <div class="ticker-name">FutureToken (FTX2)</div>
+            <div class="price" id="future-price">$0.85</div>
+            <div class="delta up" id="future-delta">+15.4%</div>
+            <canvas id="chart-future"></canvas>
+        </div>
     </div>
 
+    <script>
+        // Funksjon for å lage tilfeldig data til grafene
+        function generateData(points, base) {
+            let data = [];
+            let current = base;
+            for(let i=0; i<points; i++) {
+                current = current + (Math.random() - 0.5) * (base * 0.05);
+                data.push(current);
+            }
+            return data;
+        }
+
+        function createChart(id, color, label, baseValue) {
+            const ctx = document.getElementById(id).getContext('2d');
+            return new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: Array(20).fill(''),
+                    datasets: [{
+                        label: label,
+                        data: generateData(20, baseValue),
+                        borderColor: color,
+                        borderWidth: 2,
+                        pointRadius: 0,
+                        fill: true,
+                        backgroundColor: color + '22', // Transparent fyll
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: { legend: { display: false } },
+                    scales: { 
+                        x: { display: false },
+                        y: { display: false }
+                    }
+                }
+            });
+        }
+
+        // Initialiser grafer
+        const charts = {
+            osebx: createChart('chart-osebx', '#00ADBA', 'OSEBX', 1200),
+            btc: createChart('chart-btc', '#F7931A', 'BTC', 64000),
+            cyber: createChart('chart-cyber', '#00E676', 'CYBER', 12),
+            future: createChart('chart-future', '#BB86FC', 'FTX2', 0.8)
+        };
+
+        // Simuler "Live" oppdatering
+        setInterval(() => {
+            for (let key in charts) {
+                const chart = charts[key];
+                const newData = chart.data.datasets[0].data;
+                const lastVal = newData[newData.length - 1];
+                const nextVal = lastVal + (Math.random() - 0.5) * (lastVal * 0.02);
+                
+                newData.shift();
+                newData.push(nextVal);
+                chart.update('none');
+
+                // Oppdater tekst-prisene
+                const priceEl = document.getElementById(`${key}-price`);
+                if(key === 'osebx') priceEl.innerText = nextVal.toLocaleString('no-NO', {minimumFractionDigits: 2});
+                else priceEl.innerText = '$' + nextVal.toLocaleString('en-US', {minimumFractionDigits: key === 'future' ? 4 : 2});
+            }
+        }, 2000);
+    </script>
+</body>
+</html>
 </body>
 </html>
