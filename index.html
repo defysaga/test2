@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Finans Dashboard | Markedsanalyse</title>
+    <style>
+        body {
+            background-color: #00244E; /* BI Mørkeblå */
+            color: white;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            text-align: center;
+        }
+
+        .container {
+            padding: 2rem;
+            border-radius: 15px;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        }
+
+        .logo {
+            width: 180px;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            letter-spacing: 1px;
+        }
+
+        p {
+            color: #4C76BA;
+            font-size: 1.1rem;
+            margin-bottom: 30px;
+        }
+
+        .btn {
+            background-color: #00ADBA; /* Turkis kontrast */
+            color: white;
+            padding: 15px 30px;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: bold;
+            transition: transform 0.3s, background-color 0.3s;
+            display: inline-block;
+        }
+
+        .btn:hover {
+            background-color: #008c96;
+            transform: scale(1.05);
+        }
+
+        .footer {
+            position: absolute;
+            bottom: 20px;
+            font-size: 0.8rem;
+            opacity: 0.6;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <img src="https://www.bi.no/globalassets/images/logo/bi_logo_white.png" alt="Logo" class="logo">
+        
+        <h1>Market Intelligence</h1>
+        <p>Sanntidsoversikt over OSEBX og Kryptovaluta</p>
+        
+        <a href="DIN_STREAMLIT_URL_HER" class="btn">ÅPNE DASHBOARD</a>
+    </div>
+
+    <div class="footer">
+        © 2026 Markedsanalyse | Utviklet med Python & Streamlit
+    </div>
+
+</body>
+</html>
